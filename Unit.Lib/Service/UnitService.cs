@@ -27,7 +27,7 @@ namespace Unit.Lib.Service
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format("Parsing error : Impossible to parse [{0}] as a power", data), ex);
+                throw new UnitParserException(string.Format("Parsing error : Impossible to parse [{0}] as a power", data), ex);
             }
         }
 
@@ -61,7 +61,7 @@ namespace Unit.Lib.Service
                         valueStopPos = index;
                         if (valueStartPos == valueStopPos)
                         {
-                            throw new Exception(string.Format("Parsing error : no valid value found (Start value pos ({0}) == Stop value pos ({1}))", valueStartPos, valueStopPos));
+                            throw new UnitParserException(string.Format("Parsing error : no valid value found (Start value pos ({0}) == Stop value pos ({1}))", valueStartPos, valueStopPos));
                         }
                         value = new T?(ParseValue(data.Substring(valueStartPos, valueStopPos - valueStartPos)));
                     }
@@ -140,11 +140,11 @@ namespace Unit.Lib.Service
             }
             if (!value.HasValue)
             {
-                throw new Exception("No value found");
+                throw new UnitParserException("No value found");
             }
             if (unitElement == null)
             {
-                throw new Exception("No unit found");
+                throw new UnitParserException("No unit found");
             }
             return new UnitValue<T>(value.Value, unitElement);
         }
@@ -154,11 +154,11 @@ namespace Unit.Lib.Service
             long power = 1;
             if (powerStartPos == noPosition && powerStopPos != noPosition)
             {
-                throw new Exception(string.Format("Incohenrent power state : power stop pos = ({0}) while there is no power start pos", powerStopPos));
+                throw new UnitParserException(string.Format("Incohenrent power state : power stop pos = ({0}) while there is no power start pos", powerStopPos));
             }
             if (powerStartPos != noPosition && powerStopPos == noPosition)
             {
-                throw new Exception(string.Format("Incohenrent power state : power start pos = ({0}) while there is no power stop pos", powerStartPos));
+                throw new UnitParserException(string.Format("Incohenrent power state : power start pos = ({0}) while there is no power stop pos", powerStartPos));
             }
             if (powerStartPos != noPosition && powerStopPos != noPosition)
             {
@@ -228,7 +228,7 @@ namespace Unit.Lib.Service
             }
             catch (Exception ex)
             {
-                throw new Exception(string.Format("Parsing error : Impossible to parse [{0}] as a value", data), ex);
+                throw new UnitParserException(string.Format("Parsing error : Impossible to parse [{0}] as a value", data), ex);
             }
         }
 
@@ -251,7 +251,7 @@ namespace Unit.Lib.Service
             }
             if (prefix == null || baseName == null)
             {
-                throw new Exception(string.Format("Can't find any prefix+unit called [{0}].", data));
+                throw new UnitParserException(string.Format("Can't find any prefix+unit called [{0}].", data));
             }
             return new UnitName { Prefix = prefix, BaseName = baseName };
         }

@@ -33,6 +33,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("m", unit.AsString);
             Assert.AreEqual("m", unit.AsAsciiString);
             Assert.AreEqual("SI/metre", unit.FqName);
+            Assert.AreEqual("L", unit.Dimension.AsString);
             Assert.AreEqual(1, unit.Factor);
             Assert.AreEqual(1, unit.Dimension.QuantityCount);
             Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Length));
@@ -49,10 +50,49 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("g", unit.AsString);
             Assert.AreEqual("g", unit.AsAsciiString);
             Assert.AreEqual("SI/gram", unit.FqName);
+            Assert.AreEqual("M", unit.Dimension.AsString);
             Assert.AreEqual(1, unit.Factor);
             Assert.AreEqual(1, unit.Dimension.QuantityCount);
             Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Mass));
             Assert.AreEqual(1, unit.Dimension.GetPower(UnitBaseQuantity.Mass));
+        }
+
+        [Test]
+        public void GetUnitByNameTest_hertz()
+        {
+            var unit = ConstantProvider.GetUnitByName("hertz");
+            Assert.AreEqual("hertz", unit.Name);
+            Assert.AreEqual("Hz", unit.Symbol);
+            Assert.AreEqual("Hz", unit.AsciiSymbol);
+            Assert.AreEqual("Hz", unit.AsString);
+            Assert.AreEqual("Hz", unit.AsAsciiString);
+            Assert.AreEqual("SI_derivative/hertz", unit.FqName);
+            Assert.AreEqual("T-1", unit.Dimension.AsString);
+            Assert.AreEqual(1, unit.Factor);
+            Assert.AreEqual(1, unit.Dimension.QuantityCount);
+            Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Time));
+            Assert.AreEqual(-1, unit.Dimension.GetPower(UnitBaseQuantity.Time));
+        }
+
+        [Test]
+        public void GetUnitByNameTest_newton()
+        {
+            var unit = ConstantProvider.GetUnitByName("newton");
+            Assert.AreEqual("newton", unit.Name);
+            Assert.AreEqual("N", unit.Symbol);
+            Assert.AreEqual("N", unit.AsciiSymbol);
+            Assert.AreEqual("N", unit.AsString);
+            Assert.AreEqual("N", unit.AsAsciiString);
+            Assert.AreEqual("SI_derivative/newton", unit.FqName);
+            Assert.AreEqual("L.M.T-2", unit.Dimension.AsString);
+            Assert.AreEqual(1000f, unit.Factor);
+            Assert.AreEqual(3, unit.Dimension.QuantityCount);
+            Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Length));
+            Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Time));
+            Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Mass));
+            Assert.AreEqual(1, unit.Dimension.GetPower(UnitBaseQuantity.Length));
+            Assert.AreEqual(1, unit.Dimension.GetPower(UnitBaseQuantity.Mass));
+            Assert.AreEqual(-2, unit.Dimension.GetPower(UnitBaseQuantity.Time));
         }
 
         [Test]

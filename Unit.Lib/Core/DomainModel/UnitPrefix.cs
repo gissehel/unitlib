@@ -11,5 +11,5 @@
         public string AsAsciiString => AsciiSymbol;
     }
 
-    public class UnitPrefix : UnitPrefix<long> { }
+    public class UnitPrefix : UnitPrefix<float> { }
 }

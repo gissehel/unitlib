@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Runtime.Serialization;
 
 namespace Unit.Lib.Core.Exceptions
 {
@@ -14,6 +15,10 @@ namespace Unit.Lib.Core.Exceptions
         }
 
         public IncoherentDimensionException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
+
+        protected IncoherentDimensionException(SerializationInfo info, StreamingContext context) : base(info, context)
         {
         }
     }
