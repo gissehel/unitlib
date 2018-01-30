@@ -25,6 +25,32 @@ namespace Unit.Lib.Core.DomainModel
 
         public UnitDimension(UnitBaseQuantity unitBaseQuantity) : this(q => unitBaseQuantity == q ? 1 : 0)
         {
+
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is UnitDimension)
+            {
+                var other = obj as UnitDimension;
+                return UnitBaseQuantities.All(q => GetPower(q) == other.GetPower(q));
+            }
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return UnitBaseQuantities.Aggregate(0, (i, q) => ((i * 397) ^ (q.GetHashCode() * ((int)GetPower(q)))));
+        }
+
+        public static bool operator ==(UnitDimension dim1, UnitDimension dim2)
+        {
+            return dim1.Equals(dim2);
+        }
+
+        public static bool operator !=(UnitDimension dim1, UnitDimension dim2)
+        {
+            return !(dim1.Equals(dim2));
         }
 
         private Dictionary<UnitBaseQuantity, long> BaseValues { get; } = new Dictionary<UnitBaseQuantity, long>();

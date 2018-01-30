@@ -118,5 +118,48 @@ namespace Unit.Test.NUnit.Core.DomainModel
             BaseDimensionTest(UnitDimension.AmountOfSubstance, UnitBaseQuantity.AmountOfSubstance);
             BaseDimensionTest(UnitDimension.LuminousIntensity, UnitBaseQuantity.LuminousIntensity);
         }
+
+        [Test]
+        public void EqualityTest_Length_Length()
+        {
+            var length = UnitDimension.Length;
+            var other = new UnitDimension(q => q == UnitBaseQuantity.Length ? 1 : 0);
+            Assert.True(length == other);
+        }
+
+        [Test]
+        public void EqualityTest_Force_Force()
+        {
+            var length = UnitDimension.Length;
+            var mass = UnitDimension.Mass;
+            var time = UnitDimension.Time;
+            var force = length * mass / (time * time);
+            var other = new UnitDimension(q => 
+            {
+                switch (q)
+                {
+                    case UnitBaseQuantity.Length:
+                        return 1;
+                    case UnitBaseQuantity.Mass:
+                        return 1;
+                    case UnitBaseQuantity.Time:
+                        return -2;
+                    default:
+                        return 0;
+                }
+            });
+            Assert.True(force == other);
+        }
+
+        [Test]
+        public void InequalityTest_Length_Force()
+        {
+            var length = UnitDimension.Length;
+            var mass = UnitDimension.Mass;
+            var time = UnitDimension.Time;
+            var force = length * mass / (time * time);
+            Assert.False(length == force);
+            Assert.True(length != force);
+        }
     }
 }
