@@ -134,16 +134,19 @@ namespace Unit.Test.NUnit.Core.DomainModel
             var mass = UnitDimension.Mass;
             var time = UnitDimension.Time;
             var force = length * mass / (time * time);
-            var other = new UnitDimension(q => 
+            var other = new UnitDimension(q =>
             {
                 switch (q)
                 {
                     case UnitBaseQuantity.Length:
                         return 1;
+
                     case UnitBaseQuantity.Mass:
                         return 1;
+
                     case UnitBaseQuantity.Time:
                         return -2;
+
                     default:
                         return 0;
                 }

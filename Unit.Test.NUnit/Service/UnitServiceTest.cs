@@ -10,21 +10,21 @@ namespace Unit.Test.NUnit.Service
     [TestFixture]
     internal class UnitServiceTest
     {
-        private Mock<IConstantProvider> ConstantProviderMock { get; set; }
-        private IUnitService UnitService { get; set; }
+        private Mock<IConstantProvider<ScalarFloat, float>> ConstantProviderMock { get; set; }
+        private IUnitService<ScalarFloat, float> UnitService { get; set; }
 
         [SetUp]
         public void SetUp()
         {
-            ConstantProviderMock = new Mock<IConstantProvider>();
+            ConstantProviderMock = new Mock<IConstantProvider<ScalarFloat, float>>();
 
-            UnitPrefix unitPrefixNone = new UnitPrefix { Name = "", Symbol = "", Invert = false, Factor = 1 };
-            UnitPrefix unitPrefixKilo = new UnitPrefix { Name = "kilo", Symbol = "k", Invert = false, Factor = 1000 };
-            UnitPrefix unitPrefixMilli = new UnitPrefix { Name = "milli", Symbol = "m", Invert = true, Factor = 1000 };
-            UnitBaseName unitBaseNameMetre = new UnitBaseName { Name = "metre", Symbol = "m", Factor = 1, Dimension = UnitDimension.Length };
-            UnitBaseName unitBaseNameSecond = new UnitBaseName { Name = "second", Symbol = "s", Factor = 1, Dimension = UnitDimension.Time };
-            UnitBaseName unitBaseNameKelvin = new UnitBaseName { Name = "kelvin", Symbol = "K", Factor = 1, Dimension = UnitDimension.Temperature };
-            UnitBaseName unitBaseNameHour = new UnitBaseName { Name = "hour", Symbol = "h", Factor = 60 * 60, Dimension = UnitDimension.Time };
+            var unitPrefixNone = new UnitPrefix<ScalarFloat, float> { Name = "", Symbol = "", Invert = false, Factor = new ScalarFloat(1) };
+            var unitPrefixKilo = new UnitPrefix<ScalarFloat, float> { Name = "kilo", Symbol = "k", Invert = false, Factor = new ScalarFloat(1000) };
+            var unitPrefixMilli = new UnitPrefix<ScalarFloat, float> { Name = "milli", Symbol = "m", Invert = true, Factor = new ScalarFloat(1000) };
+            var unitBaseNameMetre = new UnitBaseName<ScalarFloat, float> { Name = "metre", Symbol = "m", Factor = new ScalarFloat(1), Dimension = UnitDimension.Length };
+            var unitBaseNameSecond = new UnitBaseName<ScalarFloat, float> { Name = "second", Symbol = "s", Factor = new ScalarFloat(1), Dimension = UnitDimension.Time };
+            var unitBaseNameKelvin = new UnitBaseName<ScalarFloat, float> { Name = "kelvin", Symbol = "K", Factor = new ScalarFloat(1), Dimension = UnitDimension.Temperature };
+            var unitBaseNameHour = new UnitBaseName<ScalarFloat, float> { Name = "hour", Symbol = "h", Factor = new ScalarFloat(60 * 60), Dimension = UnitDimension.Time };
             ConstantProviderMock.Setup(constantProvider => constantProvider.GetPrefixBySymbol("")).Returns(unitPrefixNone);
             ConstantProviderMock.Setup(constantProvider => constantProvider.GetPrefixBySymbol("k")).Returns(unitPrefixKilo);
             ConstantProviderMock.Setup(constantProvider => constantProvider.GetPrefixBySymbol("m")).Returns(unitPrefixMilli);
@@ -34,7 +34,7 @@ namespace Unit.Test.NUnit.Service
             ConstantProviderMock.Setup(constantProvider => constantProvider.GetUnitBySymbol("h")).Returns(unitBaseNameHour);
             ConstantProviderMock.Setup(constantProvider => constantProvider.GetUnitBySymbol("km")).Throws<UnitNotFoundException>();
 
-            UnitService = new UnitService(ConstantProviderMock.Object);
+            UnitService = new UnitService<ScalarFloat, float>(ConstantProviderMock.Object);
         }
 
         [TestCase("3.1 km.s-1", "L.T-1", "3.1 km/s")]

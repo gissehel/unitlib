@@ -3,13 +3,13 @@ using System.Linq;
 
 namespace Unit.Lib.Core.DomainModel
 {
-    public class UnitElement<T>
+    public class UnitElement<S, T> where S : IScalar<T>
     {
         public UnitElement()
         {
         }
 
-        public UnitElement(IEnumerable<UnitNamePower<T>> unitNamePowers)
+        public UnitElement(IEnumerable<UnitNamePower<S, T>> unitNamePowers)
         {
             foreach (var unitNamePower in unitNamePowers)
             {
@@ -18,7 +18,7 @@ namespace Unit.Lib.Core.DomainModel
                     var power = unitNamePower.Power + _unitNamePowers[unitNamePower.UnitName.FqName].Power;
                     if (power != 0)
                     {
-                        _unitNamePowers[unitNamePower.UnitName.FqName] = new UnitNamePower<T>(unitNamePower.UnitName, power);
+                        _unitNamePowers[unitNamePower.UnitName.FqName] = new UnitNamePower<S, T>(unitNamePower.UnitName, power);
                     }
                     else
                     {
@@ -32,37 +32,35 @@ namespace Unit.Lib.Core.DomainModel
             }
         }
 
-        public UnitElement(UnitNamePower<T> unitNamePower) : this(new UnitNamePower<T>[] { unitNamePower })
+        public UnitElement(UnitNamePower<S, T> unitNamePower) : this(new UnitNamePower<S, T>[] { unitNamePower })
         {
         }
 
         public long UnitNameCount => _unitNamePowers.Count;
 
-        public IEnumerable<UnitNamePower<T>> GetUnitNamePowers() => OrderedUnitNamePowers.AsEnumerable();
+        public IEnumerable<UnitNamePower<S, T>> GetUnitNamePowers() => OrderedUnitNamePowers.AsEnumerable();
 
-        private Dictionary<string, UnitNamePower<T>> _unitNamePowers = new Dictionary<string, UnitNamePower<T>>();
+        private Dictionary<string, UnitNamePower<S, T>> _unitNamePowers = new Dictionary<string, UnitNamePower<S, T>>();
 
-        private IOrderedEnumerable<UnitNamePower<T>> OrderedUnitNamePowers => _unitNamePowers.Values.Where(u => u.Power != 0).OrderByDescending(u => u.Power).ThenBy(u => u.UnitName.BaseName.AsString).ThenByDescending(u => u.UnitName.Prefix.Factor * (u.UnitName.Prefix.Invert ? -1 : 1));
+        private IOrderedEnumerable<UnitNamePower<S, T>> OrderedUnitNamePowers => _unitNamePowers.Values.Where(u => u.Power != 0).OrderByDescending(u => u.Power).ThenBy(u => u.UnitName.BaseName.AsString).ThenByDescending(u => u.UnitName.Prefix.Factor.Multiply(u.UnitName.Prefix.Invert ? -1 : 1));
 
         public UnitDimension GetDimension() => _unitNamePowers.Values.Where(u => u.Power != 0).Select(u => (u.UnitName.BaseName.Dimension * u.Power)).Aggregate(UnitDimension.None, (s, v) => s * v);
 
         public string AsString => string.Join(".", OrderedUnitNamePowers.Select(u => u.AsString));
 
         public string AsAsciiString => string.Join(".", OrderedUnitNamePowers.Select(u => u.AsAsciiString));
-    }
 
-    public class UnitElement : UnitElement<float>
-    {
-        public UnitElement()
-        {
-        }
+        public string Name => string.Join(" ", OrderedUnitNamePowers.Select(u => u.Name));
 
-        public UnitElement(IEnumerable<UnitNamePower<float>> unitNamePowers) : base(unitNamePowers)
+        public void Simplify()
         {
-        }
-
-        public UnitElement(UnitNamePower<float> unitNamePower) : base(unitNamePower)
-        {
+            if (_unitNamePowers.Select(unp => unp.Value.UnitName.BaseName.Dimension.QuantityCount > 0).Any())
+            {
+                if (_unitNamePowers.ContainsKey("/:/"))
+                {
+                    _unitNamePowers.Remove("/:/");
+                }
+            }
         }
     }
 }

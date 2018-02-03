@@ -19,10 +19,10 @@ namespace Unit.Test.NUnit.Core.DomainModel
         [Test]
         public void AsStringTest()
         {
-            UnitBaseName<float> unitBaseName = new UnitBaseName<float> { Name = "metre", AsciiSymbol = "m", Factor = 1, Symbol = "m" };
-            UnitPrefix unitPrefix = new UnitPrefix { Name = "kilo", Symbol = "k", AsciiSymbol = "k", Factor = 1000, Invert = false };
+            var unitBaseName = new UnitBaseName<ScalarFloat, float> { Name = "metre", AsciiSymbol = "m", Factor = new ScalarFloat(1), Symbol = "m" };
+            var unitPrefix = new UnitPrefix<ScalarFloat, float> { Name = "kilo", Symbol = "k", AsciiSymbol = "k", Factor = new ScalarFloat(1000), Invert = false };
 
-            UnitName<float> unitName = new UnitName<float> { BaseName = unitBaseName, Prefix = unitPrefix };
+            var unitName = new UnitName<ScalarFloat, float>(unitPrefix, unitBaseName);
 
             Assert.AreEqual("km", unitName.AsString);
         }

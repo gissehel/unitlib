@@ -25,7 +25,6 @@ namespace Unit.Lib.Core.DomainModel
 
         public UnitDimension(UnitBaseQuantity unitBaseQuantity) : this(q => unitBaseQuantity == q ? 1 : 0)
         {
-
         }
 
         public override bool Equals(object obj)
@@ -63,7 +62,7 @@ namespace Unit.Lib.Core.DomainModel
 
         public string AsString => string.Join(".", UnitBaseQuantities.Select(u => new Tuple<UnitBaseQuantity, long>(u, GetPower(u))).Where(t => t.Item2 != 0).Select(t => string.Format("{0}{1}", DimensionNames[t.Item1], t.Item2 == 1 ? "" : t.Item2.ToString())));
 
-        private static List<UnitBaseQuantity> UnitBaseQuantities = new List<UnitBaseQuantity> { UnitBaseQuantity.Length, UnitBaseQuantity.Mass, UnitBaseQuantity.Time, UnitBaseQuantity.ElectricCurrent, UnitBaseQuantity.Temperature, UnitBaseQuantity.AmountOfSubstance, UnitBaseQuantity.LuminousIntensity };
+        public static List<UnitBaseQuantity> UnitBaseQuantities = new List<UnitBaseQuantity> { UnitBaseQuantity.Length, UnitBaseQuantity.Mass, UnitBaseQuantity.Time, UnitBaseQuantity.ElectricCurrent, UnitBaseQuantity.Temperature, UnitBaseQuantity.AmountOfSubstance, UnitBaseQuantity.LuminousIntensity };
 
         public static UnitDimension operator *(UnitDimension value1, UnitDimension value2) => new UnitDimension(unitBaseQuantity => value1.GetPower(unitBaseQuantity) + value2.GetPower(unitBaseQuantity));
 

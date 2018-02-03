@@ -1,109 +1,66 @@
 ﻿using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using Unit.Lib.Core.DomainModel;
+using Unit.Lib.Core.DomainModel.Enumeration;
 using Unit.Lib.Core.Exceptions;
 using Unit.Lib.Core.Service;
 
 namespace Unit.Lib.Service
 {
-    public class ConstantProvider : IConstantProvider
+    public abstract class ConstantProvider<S, T> : IConstantProvider<S, T> where S : IScalar<T>
     {
-        private Dictionary<string, UnitBaseName> UnitByName { get; } = new Dictionary<string, UnitBaseName>();
-        private Dictionary<string, UnitBaseName> UnitBySymbol { get; } = new Dictionary<string, UnitBaseName>();
-        private Dictionary<string, UnitPrefix> UnitPrefixByName { get; } = new Dictionary<string, UnitPrefix>();
-        private Dictionary<string, UnitPrefix> UnitPrefixBySymbol { get; } = new Dictionary<string, UnitPrefix>();
-
-        private void Add(UnitBaseName unitBaseName)
-        {
-            UnitByName[unitBaseName.Name] = unitBaseName;
-            UnitBySymbol[unitBaseName.Symbol] = unitBaseName;
-        }
-
-        private void Add(UnitPrefix unitPrefix)
-        {
-            UnitPrefixByName[unitPrefix.Name] = unitPrefix;
-            UnitPrefixBySymbol[unitPrefix.Symbol] = unitPrefix;
-        }
+        protected abstract S GetScalar(float value);
 
         public ConstantProvider()
         {
-            Add(new UnitPrefix { Name = "", Symbol = "", Invert = false, Factor = 1, Namespace = "" });
-
-            Add(new UnitBaseName { Name = "metre", Symbol = "m", Factor = 1, Namespace = "SI", Dimension = UnitDimension.Length });
-            Add(new UnitBaseName { Name = "gram", Symbol = "g", Factor = 1, Namespace = "SI", Dimension = UnitDimension.Mass });
-            Add(new UnitBaseName { Name = "second", Symbol = "s", Factor = 1, Namespace = "SI", Dimension = UnitDimension.Time });
-            Add(new UnitBaseName { Name = "kelvin", Symbol = "K", Factor = 1, Namespace = "SI", Dimension = UnitDimension.Temperature });
-            Add(new UnitBaseName { Name = "ampere", Symbol = "A", Factor = 1, Namespace = "SI", Dimension = UnitDimension.ElectricCurrent });
-            Add(new UnitBaseName { Name = "mole", Symbol = "mol", Factor = 6.0221415e23f, Namespace = "SI", Dimension = UnitDimension.AmountOfSubstance });
-            Add(new UnitBaseName { Name = "candela", Symbol = "cd", Factor = 1, Namespace = "SI", Dimension = UnitDimension.LuminousIntensity });
-
-            Add(new UnitPrefix { Name = "yocto", Symbol = "y", Invert = true, Factor = 1000f * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "zepto", Symbol = "z", Invert = true, Factor = 1000f * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 , Namespace = "SI" });
-            Add(new UnitPrefix { Name = "atto", Symbol = "a", Invert = true, Factor = 1000f * 1000 * 1000 * 1000 * 1000 * 1000, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "femto", Symbol = "f", Invert = true, Factor = 1000f * 1000 * 1000 * 1000 * 1000, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "pico", Symbol = "p", Invert = true, Factor = 1000f * 1000 * 1000 * 1000, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "nano", Symbol = "n", Invert = true, Factor = 1000 * 1000 * 1000, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "micro", Symbol = "µ", Invert = true, Factor = 1000 * 1000 , Namespace = "SI" });
-            Add(new UnitPrefix { Name = "milli", Symbol = "m", Invert = true, Factor = 1000 , Namespace = "SI" });
-            Add(new UnitPrefix { Name = "centi", Symbol = "c", Invert = true, Factor = 100, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "deci", Symbol = "d", Invert = true, Factor = 10, Namespace = "SI" });
-
-            Add(new UnitPrefix { Name = "deca", Symbol = "da", Invert = false, Factor = 10, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "hecto", Symbol = "h", Invert = false, Factor = 100, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "kilo", Symbol = "k", Invert = false, Factor = 1000, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "mega", Symbol = "M", Invert = false, Factor = 1000 * 1000, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "giga", Symbol = "G", Invert = false, Factor = 1000 * 1000 * 1000, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "tera", Symbol = "T", Invert = false, Factor = 1000f * 1000 * 1000 * 1000, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "peta", Symbol = "P", Invert = false, Factor = 1000f * 1000 * 1000 * 1000 *1000, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "exa", Symbol = "E", Invert = false, Factor = 1000f * 1000 * 1000 * 1000 * 1000 * 1000, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "zetta", Symbol = "Z", Invert = false, Factor = 1000f * 1000 * 1000 * 1000 * 1000 * 1000 *1000, Namespace = "SI" });
-            Add(new UnitPrefix { Name = "yotta", Symbol = "Y", Invert = false, Factor = 1000f * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000, Namespace = "SI" });
-
-            Add(new UnitBaseName { Name = "minute", Symbol = "min", Factor = 60, Namespace = "Time", Dimension = UnitDimension.Time });
-            Add(new UnitBaseName { Name = "hour", Symbol = "h", Factor = 60 * 60, Namespace = "Time", Dimension = UnitDimension.Time });
-            Add(new UnitBaseName { Name = "day", Symbol = "d", Factor = 60 * 60 * 24, Namespace = "Time", Dimension = UnitDimension.Time });
-            Add(new UnitBaseName { Name = "year", Symbol = "y", Factor = 31556952, Namespace = "Time", Dimension = UnitDimension.Time }); // 31556952 = 60*60*24*365.2524
-            Add(new UnitBaseName { Name = "hour", Symbol = "h", Factor = 60 * 60, Namespace = "Time", Dimension = UnitDimension.Time });
-
-            Add(new UnitBaseName { Name = "jour", Symbol = "j", Factor = 60 * 60 * 24, Namespace = "Time_fr", Dimension = UnitDimension.Time });
-            Add(new UnitBaseName { Name = "an", Symbol = "an", Factor = 31556952, Namespace = "Time_fr", Dimension = UnitDimension.Time }); // 31556952 = 60*60*24*365.2524
-
-            Add(new UnitBaseName { Name = "Ångström", Symbol = "Å", Factor = 1e-10f, Namespace = "SI_derivative", Dimension = UnitDimension.Length });
-            Add(new UnitBaseName { Name = "litre", Symbol = "L", Factor = 1e-3f, Namespace = "SI_derivative", Dimension = UnitDimension.Length * UnitDimension.Length * UnitDimension.Length });
-            Add(new UnitBaseName { Name = "dalton", Symbol = "Da", Factor = 1.660538921e-24f, Namespace = "SI_derivative", Dimension = UnitDimension.Mass });
-            Add(new UnitBaseName { Name = "hertz", Symbol = "Hz", Factor = 1f, Namespace = "SI_derivative", Dimension = UnitDimension.None / UnitDimension.Time });
-            Add(new UnitBaseName { Name = "newton", Symbol = "N", Factor = 1000f, Namespace = "SI_derivative", Dimension = UnitDimension.Mass * UnitDimension.Length / (UnitDimension.Time * UnitDimension.Time) });
-            // Here be pascal - joule - watt - coulomb - volt - ohm - siemens - ... - rad - lumen
-
-
-            Add(new UnitBaseName { Name = "inch", Symbol = "in", Factor = 2.54e-2f, Namespace = "US", Dimension = UnitDimension.Length });
-            Add(new UnitBaseName { Name = "foot", Symbol = "ft", Factor = 12 * 2.54e-2f, Namespace = "US", Dimension = UnitDimension.Length });
-            Add(new UnitBaseName { Name = "yard", Symbol = "yd", Factor = 3 * 12 * 2.54e-2f, Namespace = "US", Dimension = UnitDimension.Length });
-            Add(new UnitBaseName { Name = "furlong", Symbol = "furlong", Factor = 660 * 3 * 12 * 2.54e-2f, Namespace = "US", Dimension = UnitDimension.Length });
-            Add(new UnitBaseName { Name = "us-mile", Symbol = "mi", Factor = 5280 * 12 * 2.54e-2f, Namespace = "US", Dimension = UnitDimension.Length });
-            Add(new UnitBaseName { Name = "nautical-mile", Symbol = "nmi", Factor = 1852, Namespace = "US", Dimension = UnitDimension.Length });
-            Add(new UnitBaseName { Name = "pound-mass", Symbol = "lbm", Factor = 453.59237f, Namespace = "US", Dimension = UnitDimension.Mass });
-            Add(new UnitBaseName { Name = "ounce", Symbol = "oz", Factor = 28.349523125f, Namespace = "US", Dimension = UnitDimension.Mass });
-
-            // using AmountOfSubstance as dimension for a bit is questionnable. It's not as if using amount of substance as a dimension wasn't questionnable in the first place...
-            // bit is the abreviation of bit in the IEC 60027 standard, while the abreviation is b in the IEEE 1541 standard, colliding with the abreviation of barn in the SI derivative standards.
-            Add(new UnitBaseName { Name = "bit", Symbol = "bit", Factor = 1, Namespace = "IEC", Dimension = UnitDimension.AmountOfSubstance });
-
-            // Ok, technically byte is not 8 bits, but since around 1970 meanning of byte changed from "the base of the current computer architecture" to "an octet"
-            Add(new UnitBaseName { Name = "byte", Symbol = "B", Factor = 8, Namespace = "IEC", Dimension = UnitDimension.AmountOfSubstance });
-            Add(new UnitBaseName { Name = "octet", Symbol = "o", Factor = 8, Namespace = "IEC", Dimension = UnitDimension.AmountOfSubstance });
-
-            Add(new UnitPrefix { Name = "kibi", Symbol = "Ki", Invert = false, Factor = 1024, Namespace = "IEC" });
-            Add(new UnitPrefix { Name = "mebi", Symbol = "Mi", Invert = false, Factor = 1024 * 1024, Namespace = "IEC" });
-            Add(new UnitPrefix { Name = "gibi", Symbol = "Gi", Invert = false, Factor = 1024 * 1024 * 1024, Namespace = "IEC" });
-            Add(new UnitPrefix { Name = "tebi", Symbol = "Ti", Invert = false, Factor = 1024f * 1024 * 1024 * 1024, Namespace = "IEC" });
-            Add(new UnitPrefix { Name = "pebi", Symbol = "Pi", Invert = false, Factor = 1024f * 1024 * 1024 * 1024 * 1024, Namespace = "IEC" });
-            Add(new UnitPrefix { Name = "exbi", Symbol = "Ei", Invert = false, Factor = 1024f * 1024 * 1024 * 1024 * 1024 * 1024 , Namespace = "IEC" });
-            Add(new UnitPrefix { Name = "zebi", Symbol = "Zi", Invert = false, Factor = 1024f * 1024 * 1024 * 1024 * 1024 * 1024 * 1024, Namespace = "IEC" });
-            Add(new UnitPrefix { Name = "yobi", Symbol = "Yi", Invert = false, Factor = 1024f * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024, Namespace = "IEC" });
+            Populate();
         }
 
-        public UnitPrefix GetPrefixByName(string name)
+        private Dictionary<string, UnitBaseName<S, T>> UnitByName { get; } = new Dictionary<string, UnitBaseName<S, T>>();
+        private Dictionary<string, UnitBaseName<S, T>> UnitBySymbol { get; } = new Dictionary<string, UnitBaseName<S, T>>();
+        private Dictionary<string, UnitPrefix<S, T>> UnitPrefixByName { get; } = new Dictionary<string, UnitPrefix<S, T>>();
+        private Dictionary<string, UnitPrefix<S, T>> UnitPrefixBySymbol { get; } = new Dictionary<string, UnitPrefix<S, T>>();
+
+        private List<UnitElement<S, T>> References { get; } = new List<UnitElement<S, T>>();
+        public Dictionary<UnitBaseQuantity, UnitElement<S, T>> ReferenceByQuantity { get; } = new Dictionary<UnitBaseQuantity, UnitElement<S, T>>();
+
+        protected UnitBaseName<S, T> Add(UnitBaseName<S, T> unitBaseName)
+        {
+            UnitByName[unitBaseName.Name] = unitBaseName;
+            UnitBySymbol[unitBaseName.Symbol] = unitBaseName;
+            return unitBaseName;
+        }
+
+        protected void AddReference(UnitElement<S, T> reference)
+        {
+            var dimension = reference.GetDimension();
+            if (dimension.QuantityCount == 1)
+            {
+                var quantity = UnitDimension.UnitBaseQuantities.Where(q => dimension.GetPower(q) != 0).Single();
+                ReferenceByQuantity[quantity] = reference;
+            }
+            References.Add(reference);
+        }
+
+        protected void AddReference(UnitNamePower<S, T> reference)
+        {
+            AddReference(new UnitElement<S, T>(reference));
+        }
+
+        protected void AddReference(UnitPrefix<S, T> unitPrefix, UnitBaseName<S, T> unitBaseName)
+        {
+            AddReference(new UnitNamePower<S, T>(unitPrefix, unitBaseName));
+        }
+
+        protected UnitPrefix<S, T> Add(UnitPrefix<S, T> unitPrefix)
+        {
+            UnitPrefixByName[unitPrefix.Name] = unitPrefix;
+            UnitPrefixBySymbol[unitPrefix.Symbol] = unitPrefix;
+            return unitPrefix;
+        }
+
+        public UnitPrefix<S, T> GetPrefixByName(string name)
         {
             if (UnitPrefixByName.ContainsKey(name))
             {
@@ -112,7 +69,7 @@ namespace Unit.Lib.Service
             throw new UnitNotFoundException(string.Format(CultureInfo.InvariantCulture, "Unit prefix [{0}] not found.", name));
         }
 
-        public UnitPrefix GetPrefixBySymbol(string symbol)
+        public UnitPrefix<S, T> GetPrefixBySymbol(string symbol)
         {
             if (UnitPrefixBySymbol.ContainsKey(symbol))
             {
@@ -121,7 +78,7 @@ namespace Unit.Lib.Service
             throw new UnitNotFoundException(string.Format(CultureInfo.InvariantCulture, "Unit prefix [{0}] not found.", symbol));
         }
 
-        public UnitBaseName GetUnitByName(string name)
+        public UnitBaseName<S, T> GetUnitByName(string name)
         {
             if (UnitByName.ContainsKey(name))
             {
@@ -130,7 +87,7 @@ namespace Unit.Lib.Service
             throw new UnitNotFoundException(string.Format(CultureInfo.InvariantCulture, "Unit [{0}] not found.", name));
         }
 
-        public UnitBaseName GetUnitBySymbol(string symbol)
+        public UnitBaseName<S, T> GetUnitBySymbol(string symbol)
         {
             if (UnitBySymbol.ContainsKey(symbol))
             {
@@ -138,5 +95,105 @@ namespace Unit.Lib.Service
             }
             throw new UnitNotFoundException(string.Format(CultureInfo.InvariantCulture, "Unit [{0}] not found.", symbol));
         }
+
+        protected UnitPrefix<S, T> CreateUnitPrefix(string name, string symbol, bool invert, float factorValue, string nameSpace) => new UnitPrefix<S, T> { Name = name, Symbol = symbol, Invert = invert, Factor = GetScalar(factorValue), Namespace = nameSpace };
+
+        protected UnitBaseName<S, T> CreateUnitBaseName(string name, string symbol, float factorValue, string nameSpace, UnitDimension dimension) => new UnitBaseName<S, T> { Name = name, Symbol = symbol, Factor = GetScalar(factorValue), Namespace = nameSpace, Dimension = dimension };
+
+        public void Populate()
+        {
+            var noPrefix = Add(CreateUnitPrefix("", "", false, 1, ""));
+            var noUnit = Add(CreateUnitBaseName("", "", (1), "", UnitDimension.None));
+
+            var metre = Add(CreateUnitBaseName("metre", "m", (1), "SI", UnitDimension.Length));
+            var gram = Add(CreateUnitBaseName("gram", "g", (1), "SI", UnitDimension.Mass));
+            var second = Add(CreateUnitBaseName("second", "s", (1), "SI", UnitDimension.Time));
+            var kelvin = Add(CreateUnitBaseName("kelvin", "K", (1), "SI", UnitDimension.Temperature));
+            var ampere = Add(CreateUnitBaseName("ampere", "A", (1), "SI", UnitDimension.ElectricCurrent));
+            var mole = Add(CreateUnitBaseName("mole", "mol", (6.0221415e23f), "SI", UnitDimension.AmountOfSubstance));
+            var candela = Add(CreateUnitBaseName("candela", "cd", (1), "SI", UnitDimension.LuminousIntensity));
+
+            Add(CreateUnitPrefix("yocto", "y", true, 1000f * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("zepto", "z", true, 1000f * 1000 * 1000 * 1000 * 1000 * 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("atto", "a", true, 1000f * 1000 * 1000 * 1000 * 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("femto", "f", true, 1000f * 1000 * 1000 * 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("pico", "p", true, 1000f * 1000 * 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("nano", "n", true, 1000 * 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("micro", "µ", true, 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("milli", "m", true, 1000, "SI"));
+            Add(CreateUnitPrefix("centi", "c", true, 100, "SI"));
+            Add(CreateUnitPrefix("deci", "d", true, 10, "SI"));
+
+            Add(CreateUnitPrefix("deca", "da", false, 10, "SI"));
+            Add(CreateUnitPrefix("hecto", "h", false, 100, "SI"));
+            var kilo = Add(CreateUnitPrefix("kilo", "k", false, 1000, "SI"));
+            Add(CreateUnitPrefix("mega", "M", false, 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("giga", "G", false, 1000 * 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("tera", "T", false, 1000f * 1000 * 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("peta", "P", false, 1000f * 1000 * 1000 * 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("exa", "E", false, 1000f * 1000 * 1000 * 1000 * 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("zetta", "Z", false, 1000f * 1000 * 1000 * 1000 * 1000 * 1000 * 1000, "SI"));
+            Add(CreateUnitPrefix("yotta", "Y", false, 1000f * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000, "SI"));
+
+            Add(CreateUnitBaseName("minute", "min", 60, "Time", UnitDimension.Time));
+            Add(CreateUnitBaseName("hour", "h", 60 * 60, "Time", UnitDimension.Time));
+            Add(CreateUnitBaseName("day", "d", 60 * 60 * 24, "Time", UnitDimension.Time));
+            Add(CreateUnitBaseName("year", "y", 31556952, "Time", UnitDimension.Time)); // 31556952 = 60*60*24*365.2524
+            Add(CreateUnitBaseName("hour", "h", 60 * 60, "Time", UnitDimension.Time));
+
+            Add(CreateUnitBaseName("jour", "j", 60 * 60 * 24, "Time_fr", UnitDimension.Time));
+            Add(CreateUnitBaseName("an", "an", 31556952, "Time_fr", UnitDimension.Time)); // 31556952 = 60*60*24*365.2524
+
+            Add(CreateUnitBaseName("Ångström", "Å", 1e-10f, "SI_derivative", UnitDimension.Length));
+            Add(CreateUnitBaseName("litre", "L", 1e-3f, "SI_derivative", UnitDimension.Length * UnitDimension.Length * UnitDimension.Length));
+            Add(CreateUnitBaseName("dalton", "Da", 1.660538921e-24f, "SI_derivative", UnitDimension.Mass));
+            Add(CreateUnitBaseName("hertz", "Hz", 1f, "SI_derivative", UnitDimension.None / UnitDimension.Time));
+            Add(CreateUnitBaseName("newton", "N", 1000f, "SI_derivative", UnitDimension.Mass * UnitDimension.Length / (UnitDimension.Time * UnitDimension.Time)));
+            // Here be pascal - joule - watt - coulomb - volt - ohm - siemens - ... - rad - lumen
+
+            Add(CreateUnitBaseName("inch", "in", (2.54e-2f), "US", UnitDimension.Length));
+            Add(CreateUnitBaseName("foot", "ft", (12 * 2.54e-2f), "US", UnitDimension.Length));
+            Add(CreateUnitBaseName("yard", "yd", (3 * 12 * 2.54e-2f), "US", UnitDimension.Length));
+            Add(CreateUnitBaseName("furlong", "furlong", (660 * 3 * 12 * 2.54e-2f), "US", UnitDimension.Length));
+            Add(CreateUnitBaseName("us-mile", "mi", (5280 * 12 * 2.54e-2f), "US", UnitDimension.Length));
+            Add(CreateUnitBaseName("nautical-mile", "nmi", (1852), "US", UnitDimension.Length));
+            Add(CreateUnitBaseName("pound-mass", "lbm", (453.59237f), "US", UnitDimension.Mass));
+            Add(CreateUnitBaseName("ounce", "oz", (28.349523125f), "US", UnitDimension.Mass));
+
+            // using AmountOfSubstance as dimension for a bit is questionnable. It's not as if using amount of substance as a dimension wasn't questionnable in the first place...
+            // bit is the abreviation of bit in the IEC 60027 standard, while the abreviation is b in the IEEE 1541 standard, colliding with the abreviation of barn in the SI derivative standards.
+            Add(CreateUnitBaseName("bit", "bit", (1), "IEC", UnitDimension.AmountOfSubstance));
+
+            // Ok, technically byte is not 8 bits, but since around 1970 meanning of byte changed from "the base of the current computer architecture" to "an octet"
+            Add(CreateUnitBaseName("byte", "B", (8), "IEC", UnitDimension.AmountOfSubstance));
+            Add(CreateUnitBaseName("octet", "o", (8), "IEC", UnitDimension.AmountOfSubstance));
+
+            Add(CreateUnitPrefix("kibi", "Ki", false, (1024), "IEC"));
+            Add(CreateUnitPrefix("mebi", "Mi", false, (1024 * 1024), "IEC"));
+            Add(CreateUnitPrefix("gibi", "Gi", false, (1024 * 1024 * 1024), "IEC"));
+            Add(CreateUnitPrefix("tebi", "Ti", false, (1024f * 1024 * 1024 * 1024), "IEC"));
+            Add(CreateUnitPrefix("pebi", "Pi", false, (1024f * 1024 * 1024 * 1024 * 1024), "IEC"));
+            Add(CreateUnitPrefix("exbi", "Ei", false, (1024f * 1024 * 1024 * 1024 * 1024 * 1024), "IEC"));
+            Add(CreateUnitPrefix("zebi", "Zi", false, (1024f * 1024 * 1024 * 1024 * 1024 * 1024 * 1024), "IEC"));
+            Add(CreateUnitPrefix("yobi", "Yi", false, (1024f * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024), "IEC"));
+
+            AddReference(noPrefix, metre);
+            AddReference(kilo, gram);
+            AddReference(noPrefix, second);
+            AddReference(noPrefix, kelvin);
+            AddReference(noPrefix, ampere);
+            AddReference(noPrefix, mole);
+            AddReference(noPrefix, candela);
+        }
+    }
+
+    public class ConstantProviderFloat : ConstantProvider<ScalarFloat, float>
+    {
+        protected override ScalarFloat GetScalar(float value) => new ScalarFloat(value);
+    }
+
+    public class ConstantProviderDouble : ConstantProvider<ScalarDouble, double>
+    {
+        protected override ScalarDouble GetScalar(float value) => new ScalarDouble(value);
     }
 }

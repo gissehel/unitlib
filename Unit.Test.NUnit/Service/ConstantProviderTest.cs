@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using System;
+using Unit.Lib.Core.DomainModel;
 using Unit.Lib.Core.DomainModel.Enumeration;
 using Unit.Lib.Core.Exceptions;
 using Unit.Lib.Core.Service;
@@ -10,12 +11,12 @@ namespace Unit.Test.NUnit.Service
     [TestFixture]
     public class ConstantProviderTest
     {
-        private IConstantProvider ConstantProvider { get; set; }
+        private IConstantProvider<ScalarFloat, float> ConstantProvider { get; set; }
 
         [SetUp]
         public void SetUp()
         {
-            ConstantProvider = new ConstantProvider();
+            ConstantProvider = new ConstantProviderFloat();
         }
 
         [TearDown]
@@ -34,7 +35,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("m", unit.AsAsciiString);
             Assert.AreEqual("SI/metre", unit.FqName);
             Assert.AreEqual("L", unit.Dimension.AsString);
-            Assert.AreEqual(1, unit.Factor);
+            Assert.AreEqual(1, unit.Factor.Value);
             Assert.AreEqual(1, unit.Dimension.QuantityCount);
             Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Length));
             Assert.AreEqual(1, unit.Dimension.GetPower(UnitBaseQuantity.Length));
@@ -51,7 +52,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("g", unit.AsAsciiString);
             Assert.AreEqual("SI/gram", unit.FqName);
             Assert.AreEqual("M", unit.Dimension.AsString);
-            Assert.AreEqual(1, unit.Factor);
+            Assert.AreEqual(1, unit.Factor.Value);
             Assert.AreEqual(1, unit.Dimension.QuantityCount);
             Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Mass));
             Assert.AreEqual(1, unit.Dimension.GetPower(UnitBaseQuantity.Mass));
@@ -68,7 +69,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("Hz", unit.AsAsciiString);
             Assert.AreEqual("SI_derivative/hertz", unit.FqName);
             Assert.AreEqual("T-1", unit.Dimension.AsString);
-            Assert.AreEqual(1, unit.Factor);
+            Assert.AreEqual(1, unit.Factor.Value);
             Assert.AreEqual(1, unit.Dimension.QuantityCount);
             Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Time));
             Assert.AreEqual(-1, unit.Dimension.GetPower(UnitBaseQuantity.Time));
@@ -85,7 +86,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("N", unit.AsAsciiString);
             Assert.AreEqual("SI_derivative/newton", unit.FqName);
             Assert.AreEqual("L.M.T-2", unit.Dimension.AsString);
-            Assert.AreEqual(1000f, unit.Factor);
+            Assert.AreEqual(1000f, unit.Factor.Value);
             Assert.AreEqual(3, unit.Dimension.QuantityCount);
             Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Length));
             Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Time));
@@ -141,7 +142,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("m", unit.AsString);
             Assert.AreEqual("m", unit.AsAsciiString);
             Assert.AreEqual("SI/metre", unit.FqName);
-            Assert.AreEqual(1, unit.Factor);
+            Assert.AreEqual(1, unit.Factor.Value);
             Assert.AreEqual(1, unit.Dimension.QuantityCount);
             Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Length));
             Assert.AreEqual(1, unit.Dimension.GetPower(UnitBaseQuantity.Length));
@@ -157,7 +158,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("g", unit.AsString);
             Assert.AreEqual("g", unit.AsAsciiString);
             Assert.AreEqual("SI/gram", unit.FqName);
-            Assert.AreEqual(1, unit.Factor);
+            Assert.AreEqual(1, unit.Factor.Value);
             Assert.AreEqual(1, unit.Dimension.QuantityCount);
             Assert.True(unit.Dimension.HasQuantity(UnitBaseQuantity.Mass));
             Assert.AreEqual(1, unit.Dimension.GetPower(UnitBaseQuantity.Mass));
@@ -173,7 +174,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("", prefix.AsString);
             Assert.AreEqual("", prefix.AsAsciiString);
             Assert.AreEqual("/", prefix.FqName);
-            Assert.AreEqual(1, prefix.Factor);
+            Assert.AreEqual(1, prefix.Factor.Value);
             Assert.AreEqual(false, prefix.Invert);
         }
 
@@ -187,7 +188,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("k", prefix.AsString);
             Assert.AreEqual("k", prefix.AsAsciiString);
             Assert.AreEqual("SI/kilo", prefix.FqName);
-            Assert.AreEqual(1000, prefix.Factor);
+            Assert.AreEqual(1000, prefix.Factor.Value);
             Assert.AreEqual(false, prefix.Invert);
         }
 
@@ -201,7 +202,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("m", prefix.AsString);
             Assert.AreEqual("m", prefix.AsAsciiString);
             Assert.AreEqual("SI/milli", prefix.FqName);
-            Assert.AreEqual(1000, prefix.Factor);
+            Assert.AreEqual(1000, prefix.Factor.Value);
             Assert.AreEqual(true, prefix.Invert);
         }
 
@@ -215,7 +216,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("", prefix.AsString);
             Assert.AreEqual("", prefix.AsAsciiString);
             Assert.AreEqual("/", prefix.FqName);
-            Assert.AreEqual(1, prefix.Factor);
+            Assert.AreEqual(1, prefix.Factor.Value);
             Assert.AreEqual(false, prefix.Invert);
         }
 
@@ -229,7 +230,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("k", prefix.AsString);
             Assert.AreEqual("k", prefix.AsAsciiString);
             Assert.AreEqual("SI/kilo", prefix.FqName);
-            Assert.AreEqual(1000, prefix.Factor);
+            Assert.AreEqual(1000, prefix.Factor.Value);
             Assert.AreEqual(false, prefix.Invert);
         }
 
@@ -243,7 +244,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("m", prefix.AsString);
             Assert.AreEqual("m", prefix.AsAsciiString);
             Assert.AreEqual("SI/milli", prefix.FqName);
-            Assert.AreEqual(1000, prefix.Factor);
+            Assert.AreEqual(1000, prefix.Factor.Value);
             Assert.AreEqual(true, prefix.Invert);
         }
 
@@ -257,7 +258,7 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual("M", prefix.AsString);
             Assert.AreEqual("M", prefix.AsAsciiString);
             Assert.AreEqual("SI/mega", prefix.FqName);
-            Assert.AreEqual(1000000, prefix.Factor);
+            Assert.AreEqual(1000000, prefix.Factor.Value);
             Assert.AreEqual(false, prefix.Invert);
         }
     }

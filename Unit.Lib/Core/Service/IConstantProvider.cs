@@ -1,13 +1,19 @@
-﻿namespace Unit.Lib.Core.Service
+﻿using System.Collections.Generic;
+using Unit.Lib.Core.DomainModel;
+using Unit.Lib.Core.DomainModel.Enumeration;
+
+namespace Unit.Lib.Core.Service
 {
-    public interface IConstantProvider
+    public interface IConstantProvider<S, T> where S : IScalar<T>
     {
-        DomainModel.UnitBaseName GetUnitByName(string name);
+        Dictionary<UnitBaseQuantity, UnitElement<S, T>> ReferenceByQuantity { get; }
 
-        DomainModel.UnitBaseName GetUnitBySymbol(string symbol);
+        UnitBaseName<S, T> GetUnitByName(string name);
 
-        DomainModel.UnitPrefix GetPrefixByName(string name);
+        UnitBaseName<S, T> GetUnitBySymbol(string symbol);
 
-        DomainModel.UnitPrefix GetPrefixBySymbol(string symbol);
+        UnitPrefix<S, T> GetPrefixByName(string name);
+
+        UnitPrefix<S, T> GetPrefixBySymbol(string symbol);
     }
 }
