@@ -8,9 +8,11 @@ using Unit.Lib.Core.Service;
 
 namespace Unit.Lib.Service
 {
-    public abstract class ConstantProvider<S, T> : IConstantProvider<S, T> where S : IScalar<T>
+    public class ConstantProvider<S, T> : IConstantProvider<S, T> where S : class, IScalar<T>, new()
     {
-        protected abstract S GetScalar(float value);
+        private S NullScalar = new S();
+
+        protected S GetScalar(float value) => NullScalar.GetNewFromFloat(value) as S;
 
         public ConstantProvider()
         {
@@ -103,15 +105,15 @@ namespace Unit.Lib.Service
         public void Populate()
         {
             var noPrefix = Add(CreateUnitPrefix("", "", false, 1, ""));
-            var noUnit = Add(CreateUnitBaseName("", "", (1), "", UnitDimension.None));
+            var noUnit = Add(CreateUnitBaseName("", "", 1, "", UnitDimension.None));
 
-            var metre = Add(CreateUnitBaseName("metre", "m", (1), "SI", UnitDimension.Length));
-            var gram = Add(CreateUnitBaseName("gram", "g", (1), "SI", UnitDimension.Mass));
-            var second = Add(CreateUnitBaseName("second", "s", (1), "SI", UnitDimension.Time));
-            var kelvin = Add(CreateUnitBaseName("kelvin", "K", (1), "SI", UnitDimension.Temperature));
-            var ampere = Add(CreateUnitBaseName("ampere", "A", (1), "SI", UnitDimension.ElectricCurrent));
-            var mole = Add(CreateUnitBaseName("mole", "mol", (6.0221415e23f), "SI", UnitDimension.AmountOfSubstance));
-            var candela = Add(CreateUnitBaseName("candela", "cd", (1), "SI", UnitDimension.LuminousIntensity));
+            var metre = Add(CreateUnitBaseName("metre", "m", 1, "SI", UnitDimension.Length));
+            var gram = Add(CreateUnitBaseName("gram", "g", 1, "SI", UnitDimension.Mass));
+            var second = Add(CreateUnitBaseName("second", "s", 1, "SI", UnitDimension.Time));
+            var kelvin = Add(CreateUnitBaseName("kelvin", "K", 1, "SI", UnitDimension.Temperature));
+            var ampere = Add(CreateUnitBaseName("ampere", "A", 1, "SI", UnitDimension.ElectricCurrent));
+            var mole = Add(CreateUnitBaseName("mole", "mol", 6.0221415e23f, "SI", UnitDimension.AmountOfSubstance));
+            var candela = Add(CreateUnitBaseName("candela", "cd", 1, "SI", UnitDimension.LuminousIntensity));
 
             Add(CreateUnitPrefix("yocto", "y", true, 1000f * 1000 * 1000 * 1000 * 1000 * 1000 * 1000 * 1000, "SI"));
             Add(CreateUnitPrefix("zepto", "z", true, 1000f * 1000 * 1000 * 1000 * 1000 * 1000 * 1000, "SI"));
@@ -147,35 +149,48 @@ namespace Unit.Lib.Service
             Add(CreateUnitBaseName("Ångström", "Å", 1e-10f, "SI_derivative", UnitDimension.Length));
             Add(CreateUnitBaseName("litre", "L", 1e-3f, "SI_derivative", UnitDimension.Length * UnitDimension.Length * UnitDimension.Length));
             Add(CreateUnitBaseName("dalton", "Da", 1.660538921e-24f, "SI_derivative", UnitDimension.Mass));
-            Add(CreateUnitBaseName("hertz", "Hz", 1f, "SI_derivative", UnitDimension.None / UnitDimension.Time));
-            Add(CreateUnitBaseName("newton", "N", 1000f, "SI_derivative", UnitDimension.Mass * UnitDimension.Length / (UnitDimension.Time * UnitDimension.Time)));
-            // Here be pascal - joule - watt - coulomb - volt - ohm - siemens - ... - rad - lumen
+            Add(CreateUnitBaseName("hertz", "Hz", 1, "SI_derivative", UnitDimension.None / UnitDimension.Time));
+            Add(CreateUnitBaseName("newton", "N", 1000, "SI_derivative", UnitDimension.Mass * UnitDimension.Length / (UnitDimension.Time * UnitDimension.Time)));
+            Add(CreateUnitBaseName("pascal", "Pa", 1000, "SI_derivative", UnitDimension.Mass / (UnitDimension.Length * UnitDimension.Time * UnitDimension.Time)));
+            Add(CreateUnitBaseName("joule", "J", 1000, "SI_derivative", UnitDimension.Mass * UnitDimension.Length * UnitDimension.Length / (UnitDimension.Time * UnitDimension.Time)));
+            Add(CreateUnitBaseName("watt", "W", 1000, "SI_derivative", UnitDimension.Mass * UnitDimension.Length * UnitDimension.Length / (UnitDimension.Time * UnitDimension.Time * UnitDimension.Time)));
+            Add(CreateUnitBaseName("coulomb", "C", 1, "SI_derivative", UnitDimension.Time * UnitDimension.ElectricCurrent));
+            Add(CreateUnitBaseName("volt", "V", 1000, "SI_derivative", UnitDimension.Mass * UnitDimension.Length * UnitDimension.Length / (UnitDimension.Time * UnitDimension.Time * UnitDimension.Time * UnitDimension.ElectricCurrent)));
+            Add(CreateUnitBaseName("ohm", "Ω", 1000, "SI_derivative", UnitDimension.Mass * UnitDimension.Length * UnitDimension.Length / (UnitDimension.Time * UnitDimension.Time * UnitDimension.Time * UnitDimension.ElectricCurrent * UnitDimension.ElectricCurrent)));
+            Add(CreateUnitBaseName("siemens", "S", 0.0001f, "SI_derivative", UnitDimension.Time * UnitDimension.Time * UnitDimension.Time * UnitDimension.ElectricCurrent * UnitDimension.ElectricCurrent / (UnitDimension.Mass * UnitDimension.Length * UnitDimension.Length)));
+            Add(CreateUnitBaseName("farad", "F", 0.0001f, "SI_derivative", UnitDimension.Time * UnitDimension.Time * UnitDimension.Time * UnitDimension.Time * UnitDimension.ElectricCurrent * UnitDimension.ElectricCurrent / (UnitDimension.Mass * UnitDimension.Length * UnitDimension.Length)));
+            Add(CreateUnitBaseName("tesla", "T", 1000, "SI_derivative", UnitDimension.Mass / (UnitDimension.Time * UnitDimension.Time * UnitDimension.ElectricCurrent)));
+            Add(CreateUnitBaseName("weber", "Wb", 1000, "SI_derivative", UnitDimension.Mass * UnitDimension.Length * UnitDimension.Length / (UnitDimension.Time * UnitDimension.Time * UnitDimension.ElectricCurrent)));
+            Add(CreateUnitBaseName("henry", "H", 1000, "SI_derivative", UnitDimension.Mass * UnitDimension.Length * UnitDimension.Length / (UnitDimension.Time * UnitDimension.Time * UnitDimension.ElectricCurrent * UnitDimension.ElectricCurrent)));
+            Add(CreateUnitBaseName("radian", "rad", 1, "SI_derivative", UnitDimension.None));
+            Add(CreateUnitBaseName("steradian", "sr", 1, "SI_derivative", UnitDimension.None));
+            Add(CreateUnitBaseName("lumen", "lm", 1, "SI_derivative", UnitDimension.LuminousIntensity));
 
-            Add(CreateUnitBaseName("inch", "in", (2.54e-2f), "US", UnitDimension.Length));
-            Add(CreateUnitBaseName("foot", "ft", (12 * 2.54e-2f), "US", UnitDimension.Length));
-            Add(CreateUnitBaseName("yard", "yd", (3 * 12 * 2.54e-2f), "US", UnitDimension.Length));
-            Add(CreateUnitBaseName("furlong", "furlong", (660 * 3 * 12 * 2.54e-2f), "US", UnitDimension.Length));
-            Add(CreateUnitBaseName("us-mile", "mi", (5280 * 12 * 2.54e-2f), "US", UnitDimension.Length));
-            Add(CreateUnitBaseName("nautical-mile", "nmi", (1852), "US", UnitDimension.Length));
-            Add(CreateUnitBaseName("pound-mass", "lbm", (453.59237f), "US", UnitDimension.Mass));
-            Add(CreateUnitBaseName("ounce", "oz", (28.349523125f), "US", UnitDimension.Mass));
+            Add(CreateUnitBaseName("inch", "in", 2.54e-2f, "US", UnitDimension.Length));
+            Add(CreateUnitBaseName("foot", "ft", 12 * 2.54e-2f, "US", UnitDimension.Length));
+            Add(CreateUnitBaseName("yard", "yd", 3 * 12 * 2.54e-2f, "US", UnitDimension.Length));
+            Add(CreateUnitBaseName("furlong", "furlong", 660 * 3 * 12 * 2.54e-2f, "US", UnitDimension.Length));
+            Add(CreateUnitBaseName("us-mile", "mi", 5280 * 12 * 2.54e-2f, "US", UnitDimension.Length));
+            Add(CreateUnitBaseName("nautical-mile", "nmi", 1852, "US", UnitDimension.Length));
+            Add(CreateUnitBaseName("pound-mass", "lbm", 453.59237f, "US", UnitDimension.Mass));
+            Add(CreateUnitBaseName("ounce", "oz", 28.349523125f, "US", UnitDimension.Mass));
 
             // using AmountOfSubstance as dimension for a bit is questionnable. It's not as if using amount of substance as a dimension wasn't questionnable in the first place...
             // bit is the abreviation of bit in the IEC 60027 standard, while the abreviation is b in the IEEE 1541 standard, colliding with the abreviation of barn in the SI derivative standards.
-            Add(CreateUnitBaseName("bit", "bit", (1), "IEC", UnitDimension.AmountOfSubstance));
+            Add(CreateUnitBaseName("bit", "bit", 1, "IEC", UnitDimension.AmountOfSubstance));
 
             // Ok, technically byte is not 8 bits, but since around 1970 meanning of byte changed from "the base of the current computer architecture" to "an octet"
-            Add(CreateUnitBaseName("byte", "B", (8), "IEC", UnitDimension.AmountOfSubstance));
-            Add(CreateUnitBaseName("octet", "o", (8), "IEC", UnitDimension.AmountOfSubstance));
+            Add(CreateUnitBaseName("byte", "B", 8, "IEC", UnitDimension.AmountOfSubstance));
+            Add(CreateUnitBaseName("octet", "o", 8, "IEC", UnitDimension.AmountOfSubstance));
 
-            Add(CreateUnitPrefix("kibi", "Ki", false, (1024), "IEC"));
-            Add(CreateUnitPrefix("mebi", "Mi", false, (1024 * 1024), "IEC"));
-            Add(CreateUnitPrefix("gibi", "Gi", false, (1024 * 1024 * 1024), "IEC"));
-            Add(CreateUnitPrefix("tebi", "Ti", false, (1024f * 1024 * 1024 * 1024), "IEC"));
-            Add(CreateUnitPrefix("pebi", "Pi", false, (1024f * 1024 * 1024 * 1024 * 1024), "IEC"));
-            Add(CreateUnitPrefix("exbi", "Ei", false, (1024f * 1024 * 1024 * 1024 * 1024 * 1024), "IEC"));
-            Add(CreateUnitPrefix("zebi", "Zi", false, (1024f * 1024 * 1024 * 1024 * 1024 * 1024 * 1024), "IEC"));
-            Add(CreateUnitPrefix("yobi", "Yi", false, (1024f * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024), "IEC"));
+            Add(CreateUnitPrefix("kibi", "Ki", false, 1024, "IEC"));
+            Add(CreateUnitPrefix("mebi", "Mi", false, 1024 * 1024, "IEC"));
+            Add(CreateUnitPrefix("gibi", "Gi", false, 1024 * 1024 * 1024, "IEC"));
+            Add(CreateUnitPrefix("tebi", "Ti", false, 1024f * 1024 * 1024 * 1024, "IEC"));
+            Add(CreateUnitPrefix("pebi", "Pi", false, 1024f * 1024 * 1024 * 1024 * 1024, "IEC"));
+            Add(CreateUnitPrefix("exbi", "Ei", false, 1024f * 1024 * 1024 * 1024 * 1024 * 1024, "IEC"));
+            Add(CreateUnitPrefix("zebi", "Zi", false, 1024f * 1024 * 1024 * 1024 * 1024 * 1024 * 1024, "IEC"));
+            Add(CreateUnitPrefix("yobi", "Yi", false, 1024f * 1024 * 1024 * 1024 * 1024 * 1024 * 1024 * 1024, "IEC"));
 
             AddReference(noPrefix, metre);
             AddReference(kilo, gram);
@@ -185,15 +200,5 @@ namespace Unit.Lib.Service
             AddReference(noPrefix, mole);
             AddReference(noPrefix, candela);
         }
-    }
-
-    public class ConstantProviderFloat : ConstantProvider<ScalarFloat, float>
-    {
-        protected override ScalarFloat GetScalar(float value) => new ScalarFloat(value);
-    }
-
-    public class ConstantProviderDouble : ConstantProvider<ScalarDouble, double>
-    {
-        protected override ScalarDouble GetScalar(float value) => new ScalarDouble(value);
     }
 }

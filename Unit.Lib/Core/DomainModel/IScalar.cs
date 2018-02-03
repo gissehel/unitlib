@@ -25,5 +25,9 @@ namespace Unit.Lib.Core.DomainModel
         IScalar<T> Parse(string data);
 
         IScalar<T> GetNeutral();
+
+        IScalar<T> GetNew(T value);
+
+        IScalar<T> GetNewFromFloat(float value);
     }
 }

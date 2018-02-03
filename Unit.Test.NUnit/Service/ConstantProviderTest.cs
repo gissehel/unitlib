@@ -8,15 +8,14 @@ using Unit.Lib.Service;
 
 namespace Unit.Test.NUnit.Service
 {
-    [TestFixture]
-    public class ConstantProviderTest
+    public class ConstantProviderTest<S, T> where S : class, IScalar<T>, new()
     {
-        private IConstantProvider<ScalarFloat, float> ConstantProvider { get; set; }
+        private IConstantProvider<S, T> ConstantProvider { get; set; }
 
         [SetUp]
         public void SetUp()
         {
-            ConstantProvider = new ConstantProviderFloat();
+            ConstantProvider = new ConstantProvider<S, T>();
         }
 
         [TearDown]
@@ -261,5 +260,15 @@ namespace Unit.Test.NUnit.Service
             Assert.AreEqual(1000000, prefix.Factor.Value);
             Assert.AreEqual(false, prefix.Invert);
         }
+    }
+
+    [TestFixture]
+    public class ConstantProviderFloatTest : ConstantProviderTest<ScalarFloat, float>
+    {
+    }
+
+    [TestFixture]
+    public class ConstantProviderDoubleTest : ConstantProviderTest<ScalarDouble, double>
+    {
     }
 }

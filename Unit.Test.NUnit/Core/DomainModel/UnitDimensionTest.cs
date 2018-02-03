@@ -27,7 +27,17 @@ namespace Unit.Test.NUnit.Core.DomainModel
         public void BaseDimensionTest(UnitDimension unitDimension, UnitBaseQuantity unitBaseQuantity)
         {
             Assert.AreEqual(1, unitDimension.QuantityCount);
-            Assert.True(unitDimension.HasQuantity(unitBaseQuantity));
+            foreach (var otherUnitBaseQuantity in UnitDimension.UnitBaseQuantities)
+            {
+                if (otherUnitBaseQuantity != unitBaseQuantity)
+                {
+                    Assert.False(unitDimension.HasQuantity(otherUnitBaseQuantity));
+                }
+                else
+                {
+                    Assert.True(unitDimension.HasQuantity(otherUnitBaseQuantity));
+                }
+            }
             Assert.AreEqual(1, unitDimension.GetPower(unitBaseQuantity));
         }
 

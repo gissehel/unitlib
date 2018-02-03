@@ -6,39 +6,42 @@ using Unit.Lib.Service;
 
 namespace Unit.Test.NUnit.All
 {
-    [TestFixture]
-    internal class UnitValueComputeTest
+    internal class UnitValueComputeTest<S, T> where S : class, IScalar<T>, new()
     {
-        private IConstantProvider<ScalarFloat, float> ConstantProvider { get; set; }
+        private IConstantProvider<S, T> ConstantProvider { get; set; }
 
-        private IUnitService<ScalarFloat, float> UnitService { get; set; }
+        private IUnitService<S, T> UnitService { get; set; }
+
+        private S scalarNone = new S();
+
+        protected S GetNewScalar(float value) => scalarNone.GetNewFromFloat(value) as S;
 
         [SetUp]
         public void SetUp()
         {
-            ConstantProvider = new ConstantProviderFloat();
-            UnitService = new UnitService<ScalarFloat, float>(ConstantProvider);
+            ConstantProvider = new ConstantProvider<S, T>();
+            UnitService = new UnitService<S, T>(ConstantProvider);
         }
 
-        protected UnitName<ScalarFloat, float> GetUnitName_km() => new UnitName<ScalarFloat, float>(ConstantProvider.GetPrefixBySymbol("k"), ConstantProvider.GetUnitBySymbol("m"));
+        protected UnitName<S, T> GetUnitName_km() => new UnitName<S, T>(ConstantProvider.GetPrefixBySymbol("k"), ConstantProvider.GetUnitBySymbol("m"));
 
-        protected UnitName<ScalarFloat, float> GetUnitName_s() => new UnitName<ScalarFloat, float>(ConstantProvider.GetPrefixBySymbol(""), ConstantProvider.GetUnitBySymbol("s"));
+        protected UnitName<S, T> GetUnitName_s() => new UnitName<S, T>(ConstantProvider.GetPrefixBySymbol(""), ConstantProvider.GetUnitBySymbol("s"));
 
-        protected UnitNamePower<ScalarFloat, float> GetUnitNamePower_km() => GetUnitNamePower_km(1);
+        protected UnitNamePower<S, T> GetUnitNamePower_km() => GetUnitNamePower_km(1);
 
-        protected UnitNamePower<ScalarFloat, float> GetUnitNamePower_s() => GetUnitNamePower_s(1);
+        protected UnitNamePower<S, T> GetUnitNamePower_s() => GetUnitNamePower_s(1);
 
-        protected UnitNamePower<ScalarFloat, float> GetUnitNamePower_per_km() => GetUnitNamePower_km(-1);
+        protected UnitNamePower<S, T> GetUnitNamePower_per_km() => GetUnitNamePower_km(-1);
 
-        protected UnitNamePower<ScalarFloat, float> GetUnitNamePower_per_s() => GetUnitNamePower_s(-1);
+        protected UnitNamePower<S, T> GetUnitNamePower_per_s() => GetUnitNamePower_s(-1);
 
-        protected UnitNamePower<ScalarFloat, float> GetUnitNamePower_km(long power) => new UnitNamePower<ScalarFloat, float>(GetUnitName_km(), power);
+        protected UnitNamePower<S, T> GetUnitNamePower_km(long power) => new UnitNamePower<S, T>(GetUnitName_km(), power);
 
-        protected UnitNamePower<ScalarFloat, float> GetUnitNamePower_s(long power) => new UnitNamePower<ScalarFloat, float>(GetUnitName_s(), power);
+        protected UnitNamePower<S, T> GetUnitNamePower_s(long power) => new UnitNamePower<S, T>(GetUnitName_s(), power);
 
-        protected UnitElement<ScalarFloat, float> CreateUnitElement(params UnitNamePower<ScalarFloat, float>[] namePowers) => new UnitElement<ScalarFloat, float>(namePowers);
+        protected UnitElement<S, T> CreateUnitElement(params UnitNamePower<S, T>[] namePowers) => new UnitElement<S, T>(namePowers);
 
-        protected UnitValue<ScalarFloat, float> CreateUnit(float value, UnitElement<ScalarFloat, float> unitElement) => new UnitValue<ScalarFloat, float>(new ScalarFloat(value), unitElement);
+        protected UnitValue<S, T> CreateUnit(float value, UnitElement<S, T> unitElement) => new UnitValue<S, T>(GetNewScalar(value), unitElement);
 
         protected IEnumerable<X> CreateEnumerable<X>(params X[] xs)
         {
@@ -79,7 +82,7 @@ namespace Unit.Test.NUnit.All
             AssertUnitValueAsStringFormat("0.86 km-1.s-1", unitValue);
         }
 
-        public void AssertUnitValueAsStringFormat(string expectedResult, UnitValue<ScalarFloat, float> unitValue)
+        public void AssertUnitValueAsStringFormat(string expectedResult, UnitValue<S, T> unitValue)
         {
             Assert.AreEqual(expectedResult, unitValue.AsString);
         }
@@ -111,4 +114,14 @@ namespace Unit.Test.NUnit.All
             Assert.AreEqual("0.000254 cm", result.AsString);
         }
     }
+
+    [TestFixture]
+    internal class UnitValueComputeFloatTest : UnitValueComputeTest<ScalarFloat, float>
+    {
+    }
+
+    //[TestFixture]
+    //internal class UnitValueComputeDoubleTest : UnitValueComputeTest<ScalarDouble, double>
+    //{
+    //}
 }

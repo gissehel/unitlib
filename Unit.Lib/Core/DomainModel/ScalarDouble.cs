@@ -50,5 +50,9 @@ namespace Unit.Lib.Core.DomainModel
         public IScalar<double> GetNeutral() => new ScalarDouble(1);
 
         public int CompareTo(IScalar<double> other) => Value.CompareTo(other.Value);
+
+        public IScalar<double> GetNew(double value) => new ScalarDouble(value);
+
+        public IScalar<double> GetNewFromFloat(float value) => new ScalarDouble(value);
     }
 }
