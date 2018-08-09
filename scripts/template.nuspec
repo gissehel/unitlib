@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>{package_name}</id>
+    <version>{version}</version>
+    <authors>gissehel</authors>
+    <owners>gissehel</owners>
+    <projectUrl>https://github.com/gissehel/unitlib</projectUrl>
+    <iconUrl>https://raw.githubusercontent.com/gissehel/unitlib/master/res/Unitlib-32.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>A simple .Net library in C# to handle manipulation and convertion of physical units{description_add}</description>
+    <releaseNotes></releaseNotes>
+    <copyright>MIT</copyright>
+    <tags>Physical-units conversion</tags>
+  </metadata>
+  <files>
+    <file src="{package_path}\Bin\Release\netstandard2.0\{package_name}.dll" target="lib" />
+  </files> 
+</package>
