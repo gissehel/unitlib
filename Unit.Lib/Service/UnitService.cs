@@ -44,8 +44,6 @@ namespace Unit.Lib.Service
         public UnitElement<S, T> ParseUnit(string data)
         {
             const int noPosition = -1;
-            int valueStartPos = noPosition;
-            int valueStopPos = noPosition;
             int unitStartPos = noPosition;
             int unitStopPos = noPosition;
             int powerStartPos = noPosition;
@@ -313,7 +311,7 @@ namespace Unit.Lib.Service
             {
                 throw new UnitParserException(string.Format("Can't find any prefix+unit called [{0}].", data));
             }
-            return new UnitName<S, T>(prefix, baseName);
+            return new UnitName<S, T>(prefix, baseName: baseName);
         }
 
         public UnitValue<S, T> Multiply(UnitValue<S, T> unit1, UnitValue<S, T> unit2)

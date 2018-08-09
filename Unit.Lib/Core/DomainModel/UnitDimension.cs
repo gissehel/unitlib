@@ -72,7 +72,7 @@ namespace Unit.Lib.Core.DomainModel
 
         public static UnitDimension operator -(UnitDimension value) => new UnitDimension(unitBaseQuantity => -value.GetPower(unitBaseQuantity));
 
-        private static Dictionary<UnitBaseQuantity, string> DimensionNames = new Dictionary<UnitBaseQuantity, string>
+        private static readonly Dictionary<UnitBaseQuantity, string> DimensionNames = new Dictionary<UnitBaseQuantity, string>
         {
             { UnitBaseQuantity.Length, "L"},
             { UnitBaseQuantity.Mass, "M"},
