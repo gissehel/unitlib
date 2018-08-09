@@ -151,6 +151,45 @@ namespace Unit.Test.NUnit.All
             var result = UnitService.Convert(unit);
             Assert.AreEqual("1", result.AsString);
         }
+
+        [Test]
+        public void Convert_1cm2()
+        {
+            var unit = UnitService.Parse("1cm2");
+            Assert.AreEqual("1 cm2", unit.AsString);
+            var result = UnitService.Convert(unit);
+            Assert.AreEqual("0.0001 m2", result.AsString);
+        }
+
+        [Test]
+        public void Convert_1cm_2()
+        {
+            var unit = UnitService.Parse("1cm-2");
+            Assert.AreEqual("1 cm-2", unit.AsString);
+            var result = UnitService.Convert(unit);
+            Assert.AreEqual("10000 m-2", result.AsString);
+        }
+
+        [Test]
+        public void Convert_1g2()
+        {
+            var unit = UnitService.Parse("1g2");
+            Assert.AreEqual("1 g2", unit.AsString);
+            var result = UnitService.Convert(unit);
+            Assert.AreEqual("1E-06 kg2", result.AsString);
+        }
+
+        [Test]
+        public void Convert_km_per_h_into_in_per_min()
+        {
+            var unit = UnitService.Parse("7km/h");
+            Assert.AreEqual("7 km.h-1", unit.AsString);
+            var target = UnitService.Parse("in/min");
+            var result = UnitService.Convert(unit, target);
+            Assert.AreEqual(target.Value.GetNeutral().Value, target.Value.Value);
+            Assert.AreEqual(unit.UnitElement.GetDimension(), target.UnitElement.GetDimension());
+            Assert.AreEqual("4593.176 in.min-1", result.AsString);
+        }
     }
 
     [TestFixture]

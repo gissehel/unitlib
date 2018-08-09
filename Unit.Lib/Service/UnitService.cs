@@ -172,6 +172,10 @@ namespace Unit.Lib.Service
                             throw new UnitParserException(string.Format("Parsing error : no valid value found (Start value pos ({0}) == Stop value pos ({1}))", valueStartPos, valueStopPos));
                         }
                         value = ParseValue(data.Substring(valueStartPos, valueStopPos - valueStartPos));
+                        if (!IsSpaceALike(item))
+                        {
+                            unitStartPos = index;
+                        }
                     }
                 }
                 else if (value != null && unitStartPos == noPosition)
@@ -283,7 +287,7 @@ namespace Unit.Lib.Service
             }
             else
             {
-                unitElement = new UnitElement<S, T>(unitElement.GetUnitNamePowers().Union(new UnitNamePower<S, T>[] { unitNamePower }));
+                unitElement = new UnitElement<S, T>(unitElement.GetUnitNamePowers().Concat(new UnitNamePower<S, T>[] { unitNamePower }));
             }
             return unitElement;
         }
@@ -324,13 +328,13 @@ namespace Unit.Lib.Service
 
         public UnitValue<S, T> Multiply(UnitValue<S, T> unit1, UnitValue<S, T> unit2)
         {
-            var result = new UnitValue<S, T>(MultiplyScalar(unit1.Value, unit2.Value), new UnitElement<S, T>(unit1.UnitElement.GetUnitNamePowers().Union(unit2.UnitElement.GetUnitNamePowers())));
+            var result = new UnitValue<S, T>(MultiplyScalar(unit1.Value, unit2.Value), new UnitElement<S, T>(unit1.UnitElement.GetUnitNamePowers().Concat(unit2.UnitElement.GetUnitNamePowers())));
             return result;
         }
 
         public UnitValue<S, T> Divide(UnitValue<S, T> unit1, UnitValue<S, T> unit2)
         {
-            var result = new UnitValue<S, T>(DivideScalar(unit1.Value, unit2.Value), new UnitElement<S, T>(unit1.UnitElement.GetUnitNamePowers().Union(unit2.UnitElement.GetUnitNamePowers().Select(unp => new UnitNamePower<S, T>(unp.UnitName, -unp.Power)))));
+            var result = new UnitValue<S, T>(DivideScalar(unit1.Value, unit2.Value), new UnitElement<S, T>(unit1.UnitElement.GetUnitNamePowers().Concat(unit2.UnitElement.GetUnitNamePowers().Select(unp => new UnitNamePower<S, T>(unp.UnitName, -unp.Power)))));
             return result;
         }
 

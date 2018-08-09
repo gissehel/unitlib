@@ -19,6 +19,8 @@ namespace Unit.Lib.Core.DomainModel
 
         public double Value => _value;
 
+        public string AsString => Value.ToString();
+
         public IScalar<double> Add(IScalar<double> scalar) => new ScalarDouble(Value + scalar.Value);
 
         public IScalar<double> Divide(IScalar<double> scalar) => new ScalarDouble(Value - scalar.Value);

@@ -11,7 +11,7 @@
 </linearGradient>
 <g id="circle">
 <circle stroke-width="0" r="8" fill="#ffffff" cx="0" cy="0" />
-<circle stroke-width="0" r="6" fill="#1166ff" cx="0" cy="0" />
+<circle stroke-width="0" r="6" fill="#119922" cx="0" cy="0" />
 </g>
 </defs>
 </g>
@@ -22,6 +22,6 @@
 <use xlink:href="#circle" x="16" y="48" />
 <use xlink:href="#circle" x="48" y="16" />
 <use xlink:href="#circle" x="48" y="32" />
-<use xlink:href="#circle" x="46" y="46" />
+<use xlink:href="#circle" x="48" y="48" />
 
 </svg>

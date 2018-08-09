@@ -29,5 +29,7 @@ namespace Unit.Lib.Core.DomainModel
         IScalar<T> GetNew(T value);
 
         IScalar<T> GetNewFromFloat(float value);
+
+        string AsString { get; }
     }
 }

@@ -19,6 +19,8 @@ namespace Unit.Lib.Core.DomainModel
 
         public float Value => _value;
 
+        public string AsString => Value.ToString();
+
         public IScalar<float> Add(IScalar<float> scalar) => new ScalarFloat(Value + scalar.Value);
 
         public IScalar<float> Substract(IScalar<float> scalar) => new ScalarFloat(Value - scalar.Value);
