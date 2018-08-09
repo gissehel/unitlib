@@ -19,6 +19,8 @@ namespace Unit.Lib.Core.Service
         UnitValue<S, T> Convert(UnitValue<S, T> value);
 
         UnitValue<S, T> Convert(UnitValue<S, T> value, UnitElement<S, T> unitElement);
+
+        UnitValue<S, T> Convert(UnitValue<S, T> valueSource, UnitValue<S, T> valueTarget);
     }
 
     public interface IUnitService : IUnitService<ScalarFloat, float> { }

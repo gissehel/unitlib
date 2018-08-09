@@ -104,14 +104,52 @@ namespace Unit.Test.NUnit.All
             Assert.AreEqual("1", UnitService.Convert(unit).AsString);
         }
 
-        // [Test]
+        [Test]
         public void ConvertTo_in_to_cm()
         {
             var unit = UnitService.Parse("1 in");
             Assert.AreEqual("1 in", unit.AsString);
             var element = UnitService.ParseUnit("cm");
             var result = UnitService.Convert(unit, element);
-            Assert.AreEqual("0.000254 cm", result.AsString);
+            Assert.AreEqual("2.54 cm", result.AsString);
+        }
+
+        [Test]
+        public void ConvertTo_in_to_cm_bis()
+        {
+            var unit = UnitService.Parse("1 in");
+            Assert.AreEqual("1 in", unit.AsString);
+            var unitTarget = UnitService.Parse("cm");
+            var result = UnitService.Convert(unit, unitTarget);
+            Assert.AreEqual("2.54 cm", result.AsString);
+        }
+
+        [Test]
+        public void Convert_cm_to_SI()
+        {
+            var unit = UnitService.Parse("2  cm");
+            Assert.AreEqual("2 cm", unit.AsString);
+            var result = UnitService.Convert(unit);
+            Assert.AreEqual("0.02 m", result.AsString);
+        }
+
+        [Test]
+        public void Convert_cm_to_h()
+        {
+            var unit = UnitService.Parse("2  cm");
+            Assert.AreEqual("2 cm", unit.AsString);
+            var target = UnitService.Parse("h");
+            var result = UnitService.Convert(unit, target);
+            Assert.AreEqual("5.555556E-06 h.m.s-1", result.AsString);
+        }
+
+        [Test]
+        public void Convert_empty()
+        {
+            var unit = UnitService.Parse("");
+            Assert.AreEqual("1", unit.AsString);
+            var result = UnitService.Convert(unit);
+            Assert.AreEqual("1", result.AsString);
         }
     }
 

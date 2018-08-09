@@ -154,6 +154,12 @@ namespace Unit.Lib.Service
                     if (!IsSpaceALike(item))
                     {
                         valueStartPos = index;
+                        if (IsNotValueAnymore(item))
+                        {
+                            valueStopPos = index;
+                            value = ParseValue("1");
+                            unitStartPos = index;
+                        }
                     }
                 }
                 else if (valueStopPos == noPosition)
@@ -240,13 +246,15 @@ namespace Unit.Lib.Service
                 }
                 unitElement = ExtractUnitElement(unitElement, data, noPosition, unitStartPos, unitStopPos, powerStartPos, powerStopPos, divideNextElement);
             }
+
             if (value == null)
             {
-                throw new UnitParserException("No value found");
+                value = ParseValue("1");
             }
+
             if (unitElement == null)
             {
-                throw new UnitParserException("No unit found");
+                unitElement = new UnitElement<S, T>();
             }
             return new UnitValue<S, T>(value, unitElement);
         }
@@ -342,7 +350,7 @@ namespace Unit.Lib.Service
 
         protected S DivideScalar(S t1, S t2) => t1.Divide(t2) as S;
 
-        protected S ApplyScalarPower(S t1, S t2, long power) => t1.Multiply(t2).ApplyPower(power) as S;
+        protected S ApplyScalarPower(S t1, bool invert, S t2, long power) => invert ? t2.Divide(t1).ApplyPower(power) as S : t1.Multiply(t2).ApplyPower(power) as S;
 
         protected S MultiplyScalars(IEnumerable<S> scalars) => scalars.Aggregate(NeutralScalar, (x, y) => MultiplyScalar(x, y));
 
@@ -389,6 +397,7 @@ namespace Unit.Lib.Service
                                 ApplyScalarPower
                                 (
                                     unitNamePower.UnitName.Prefix.Factor,
+                                    unitNamePower.UnitName.Prefix.Invert,
                                     unitNamePower.UnitName.BaseName.Factor,
                                     unitNamePower.Power
                                 )
@@ -402,7 +411,14 @@ namespace Unit.Lib.Service
 
         public UnitValue<S, T> Convert(UnitValue<S, T> value, UnitElement<S, T> unitElement)
         {
-            throw new NotImplementedException();
+            var s = new S();
+            var unitValueTarget = new UnitValue<S, T>(s.GetNeutral() as S, unitElement);
+            return Convert(value, unitValueTarget);
+        }
+
+        public UnitValue<S, T> Convert(UnitValue<S, T> valueSource, UnitValue<S, T> valueTarget)
+        {
+            return Multiply(Convert(Divide(valueSource, valueTarget)), valueTarget);
         }
     }
 }
