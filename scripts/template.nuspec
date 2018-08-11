@@ -14,6 +14,6 @@
     <tags>Physical-units conversion</tags>
   </metadata>
   <files>
-    <file src="{package_path}\Bin\Release\netstandard2.0\{package_name}.dll" target="lib" />
+    <file src="{package_path}\Bin\Release\netstandard2.0\{package_name}.dll" target="lib\netstandard2.0\{package_name}.dll" />
   </files> 
 </package>
