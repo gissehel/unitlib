@@ -27,7 +27,7 @@ namespace Unit.Lib.Service
         private List<UnitElement<S, T>> References { get; } = new List<UnitElement<S, T>>();
         public Dictionary<UnitBaseQuantity, UnitElement<S, T>> ReferenceByQuantity { get; } = new Dictionary<UnitBaseQuantity, UnitElement<S, T>>();
 
-        protected UnitBaseName<S, T> Add(UnitBaseName<S, T> unitBaseName)
+        public UnitBaseName<S, T> Add(UnitBaseName<S, T> unitBaseName)
         {
             UnitByName[unitBaseName.Name] = unitBaseName;
             UnitBySymbol[unitBaseName.Symbol] = unitBaseName;
@@ -55,7 +55,7 @@ namespace Unit.Lib.Service
             AddReference(new UnitNamePower<S, T>(unitPrefix, unitBaseName));
         }
 
-        protected UnitPrefix<S, T> Add(UnitPrefix<S, T> unitPrefix)
+        public UnitPrefix<S, T> Add(UnitPrefix<S, T> unitPrefix)
         {
             UnitPrefixByName[unitPrefix.Name] = unitPrefix;
             UnitPrefixBySymbol[unitPrefix.Symbol] = unitPrefix;
@@ -98,9 +98,13 @@ namespace Unit.Lib.Service
             throw new UnitNotFoundException(string.Format(CultureInfo.InvariantCulture, "Unit [{0}] not found.", symbol));
         }
 
-        protected UnitPrefix<S, T> CreateUnitPrefix(string name, string symbol, bool invert, float factorValue, string nameSpace) => new UnitPrefix<S, T> { Name = name, Symbol = symbol, Invert = invert, Factor = GetScalar(factorValue), Namespace = nameSpace };
+        public UnitPrefix<S, T> CreateUnitPrefix(string name, string symbol, bool invert, float factorValue, string nameSpace) => new UnitPrefix<S, T> { Name = name, Symbol = symbol, Invert = invert, Factor = GetScalar(factorValue), Namespace = nameSpace };
 
-        protected UnitBaseName<S, T> CreateUnitBaseName(string name, string symbol, float factorValue, string nameSpace, UnitDimension dimension) => new UnitBaseName<S, T> { Name = name, Symbol = symbol, Factor = GetScalar(factorValue), Namespace = nameSpace, Dimension = dimension };
+        public UnitPrefix<S, T> CreateUnitPrefix(string name, string symbol, bool invert, S factorScalar, string nameSpace) => new UnitPrefix<S, T> { Name = name, Symbol = symbol, Invert = invert, Factor = factorScalar, Namespace = nameSpace };
+
+        public UnitBaseName<S, T> CreateUnitBaseName(string name, string symbol, float factorValue, string nameSpace, UnitDimension dimension) => new UnitBaseName<S, T> { Name = name, Symbol = symbol, Factor = GetScalar(factorValue), Namespace = nameSpace, Dimension = dimension };
+
+        public UnitBaseName<S, T> CreateUnitBaseName(string name, string symbol, S factorScalar, string nameSpace, UnitDimension dimension) => new UnitBaseName<S, T> { Name = name, Symbol = symbol, Factor = factorScalar, Namespace = nameSpace, Dimension = dimension };
 
         public void Populate()
         {

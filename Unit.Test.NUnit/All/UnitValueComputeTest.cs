@@ -190,6 +190,38 @@ namespace Unit.Test.NUnit.All
             Assert.AreEqual(unit.UnitElement.GetDimension(), target.UnitElement.GetDimension());
             Assert.AreEqual("4593.176 in.min-1", result.AsString);
         }
+
+        [Test]
+        public void AssignNewUnit()
+        {
+            var unit = UnitService.Parse("213 dft2");
+            UnitService.AddUnit(unit, "grut", "R", "user");
+            unit = UnitService.Parse("R2");
+            var result = UnitService.Convert(unit);
+            Assert.AreEqual("0.03915787 m4", result.AsString);
+        }
+
+        [Test]
+        public void AssignNewPrefixNonInverted()
+        {
+            var unit = UnitService.Parse("213 dft2");
+            UnitService.AddPrefix(unit, "Dozo", "D", "user", GetNewScalar(12), false);
+            UnitService.AddPrefix(unit, "dozo", "w", "user", GetNewScalar(12), true);
+            unit = UnitService.Parse("2 Dm");
+            var result = UnitService.Convert(unit);
+            Assert.AreEqual("24 m", result.AsString);
+        }
+
+        [Test]
+        public void AssignNewPrefixInverted()
+        {
+            var unit = UnitService.Parse("213 dft2");
+            UnitService.AddPrefix(unit, "Dozo", "D", "user", GetNewScalar(12), false);
+            UnitService.AddPrefix(unit, "dozo", "w", "user", GetNewScalar(12), true);
+            unit = UnitService.Parse("24 wm");
+            var result = UnitService.Convert(unit);
+            Assert.AreEqual("2 m", result.AsString);
+        }
     }
 
     [TestFixture]

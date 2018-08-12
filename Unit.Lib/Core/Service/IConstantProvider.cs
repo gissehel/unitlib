@@ -15,5 +15,13 @@ namespace Unit.Lib.Core.Service
         UnitPrefix<S, T> GetPrefixByName(string name);
 
         UnitPrefix<S, T> GetPrefixBySymbol(string symbol);
+
+        UnitBaseName<S, T> CreateUnitBaseName(string name, string symbol, S factorScalar, string nameSpace, UnitDimension dimension);
+
+        UnitPrefix<S, T> CreateUnitPrefix(string name, string symbol, bool invert, S factorScalar, string nameSpace);
+
+        UnitBaseName<S, T> Add(UnitBaseName<S, T> unitBaseName);
+
+        UnitPrefix<S, T> Add(UnitPrefix<S, T> unitPrefix);
     }
 }

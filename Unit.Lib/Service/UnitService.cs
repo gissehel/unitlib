@@ -424,5 +424,29 @@ namespace Unit.Lib.Service
         {
             return Multiply(Convert(Divide(valueSource, valueTarget)), valueTarget);
         }
+
+        private S GetFactor(UnitNamePower<S, T> unitNamePower)
+        {
+            return ApplyScalarPower
+            (
+                unitNamePower.UnitName.Prefix.Factor,
+                unitNamePower.UnitName.Prefix.Invert,
+                unitNamePower.UnitName.BaseName.Factor,
+                unitNamePower.Power
+            );
+        }
+
+        public void AddUnit(UnitValue<S, T> value, string name, string symbole, string nameSpace)
+        {
+            var dimension = value.GetDimension();
+            S factor = value.UnitElement.GetUnitNamePowers().Aggregate(value.Value as IScalar<T>, (scalar, unitNamePower) => scalar.Multiply(GetFactor(unitNamePower))) as S;
+
+            ConstantProvider.Add(ConstantProvider.CreateUnitBaseName(name, symbole, factor, nameSpace, dimension));
+        }
+
+        public void AddPrefix(UnitValue<S, T> value, string name, string symbole, string nameSpace, S factor, bool inverted)
+        {
+            ConstantProvider.Add(ConstantProvider.CreateUnitPrefix(name, symbole, inverted, factor, nameSpace));
+        }
     }
 }
