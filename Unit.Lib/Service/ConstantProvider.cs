@@ -178,6 +178,7 @@ namespace Unit.Lib.Service
             Add(CreateUnitBaseName("nautical-mile", "nmi", 1852, "US", UnitDimension.Length));
             Add(CreateUnitBaseName("pound-mass", "lbm", 453.59237f, "US", UnitDimension.Mass));
             Add(CreateUnitBaseName("ounce", "oz", 28.349523125f, "US", UnitDimension.Mass));
+            Add(CreateUnitBaseName("gallon", "gal", 3.785411784f, "US", UnitDimension.Length * UnitDimension.Length * UnitDimension.Length));
 
             // using AmountOfSubstance as dimension for a bit is questionnable. It's not as if using amount of substance as a dimension wasn't questionnable in the first place...
             // bit is the abreviation of bit in the IEC 60027 standard, while the abreviation is b in the IEEE 1541 standard, colliding with the abreviation of barn in the SI derivative standards.
