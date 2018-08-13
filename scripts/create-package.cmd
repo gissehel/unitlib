@@ -9,12 +9,6 @@ CALL scripts\environnement.cmd
 CALL :SET_BUILD_DATE
 CALL :SET_NUGET_PACKAGE_VERSION
 
-rd /s /q "%TARGET_DIR%"
-rd /s /q "%ARTEFACT_DIR%"
-
-md "%TARGET_DIR%"
-md "%ARTEFACT_DIR%"
-
 CALL :CREATE_NUGET Unit.Lib
 
 :SET_BUILD_DATE
