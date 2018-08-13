@@ -24,7 +24,7 @@ namespace Unit.Lib.Core.Service
 
         void AddUnit(UnitValue<S, T> value, string name, string symbole, string nameSpace);
 
-        void AddPrefix(UnitValue<S, T> value, string name, string symbole, string nameSpace, S factor, bool inverted);
+        void AddPrefix(string name, string symbole, string nameSpace, S factor, bool inverted);
     }
 
     public interface IUnitService : IUnitService<ScalarFloat, float> { }

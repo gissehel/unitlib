@@ -204,10 +204,9 @@ namespace Unit.Test.NUnit.All
         [Test]
         public void AssignNewPrefixNonInverted()
         {
-            var unit = UnitService.Parse("213 dft2");
-            UnitService.AddPrefix(unit, "Dozo", "D", "user", GetNewScalar(12), false);
-            UnitService.AddPrefix(unit, "dozo", "w", "user", GetNewScalar(12), true);
-            unit = UnitService.Parse("2 Dm");
+            UnitService.AddPrefix("Dozo", "D", "user", GetNewScalar(12), false);
+            UnitService.AddPrefix("dozo", "w", "user", GetNewScalar(12), true);
+            var unit = UnitService.Parse("2 Dm");
             var result = UnitService.Convert(unit);
             Assert.AreEqual("24 m", result.AsString);
         }
@@ -215,10 +214,9 @@ namespace Unit.Test.NUnit.All
         [Test]
         public void AssignNewPrefixInverted()
         {
-            var unit = UnitService.Parse("213 dft2");
-            UnitService.AddPrefix(unit, "Dozo", "D", "user", GetNewScalar(12), false);
-            UnitService.AddPrefix(unit, "dozo", "w", "user", GetNewScalar(12), true);
-            unit = UnitService.Parse("24 wm");
+            UnitService.AddPrefix("Dozo", "D", "user", GetNewScalar(12), false);
+            UnitService.AddPrefix("dozo", "w", "user", GetNewScalar(12), true);
+            var unit = UnitService.Parse("24 wm");
             var result = UnitService.Convert(unit);
             Assert.AreEqual("2 m", result.AsString);
         }

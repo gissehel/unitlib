@@ -444,7 +444,7 @@ namespace Unit.Lib.Service
             ConstantProvider.Add(ConstantProvider.CreateUnitBaseName(name, symbole, factor, nameSpace, dimension));
         }
 
-        public void AddPrefix(UnitValue<S, T> value, string name, string symbole, string nameSpace, S factor, bool inverted)
+        public void AddPrefix(string name, string symbole, string nameSpace, S factor, bool inverted)
         {
             ConstantProvider.Add(ConstantProvider.CreateUnitPrefix(name, symbole, inverted, factor, nameSpace));
         }
